@@ -1,7 +1,8 @@
 #include "mainwindow.h"
+#include "epubparser.h"
+#include "epubreaderdialog.h"
 #include "ui_mainwindow.h"
 #include "data.h"
-#include "pdfviewer.h"
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -30,9 +31,7 @@ void MainWindow::on_createShelveBtn_clicked()
 
 void MainWindow::on_deleteShelveBtn_clicked()
 {
-    int rowIndex = 0, flag = 0;
     QString shelveName = ui->shelveNameLineEdit->text();
-    //QString bookName = ui->bookNameLineEdit->text();
     if(shelveName == "" || shelveName == "all" ||shelveName == "undecided" ){
         QMessageBox::warning(this,"Shelve error", "You should enter a valid name. Try again.");
     }else{
@@ -40,13 +39,8 @@ void MainWindow::on_deleteShelveBtn_clicked()
             ui->typeOfShelve->removeItem(ui->typeOfShelve->findText(shelveName,Qt::MatchContains));
             for (int i = 0; i < ui->bookTable->rowCount(); i++) {
                 if (ui->bookTable->item(i, 1)->text() == shelveName) {
-                    flag = 1;
-                    rowIndex = i;
-                    break;
+                    ui->bookTable->setItem(i, 1, new QTableWidgetItem("undecided"));
                 }
-            }
-            if(flag == 1){
-                ui->bookTable->setItem(rowIndex, 1, new QTableWidgetItem("undecided"));
             }
         }else{
             QMessageBox::warning(this,"Shelve error", "Entered shelve does not exist.");
@@ -84,8 +78,7 @@ void MainWindow::on_addBookBtn_clicked()
 }
 
 
-void MainWindow::on_deleteBookBtn_clicked()
-{
+void MainWindow::on_deleteBookBtn_clicked(){
     QString bookName = ui->bookNameLineEdit->text();
     //QList<QTableWidgetItem *> NameList = ui->bookTable->findItems(bookName, Qt::MatchExactly);
     int rowIndex = 0, flag = 0;
@@ -115,10 +108,6 @@ void MainWindow::on_uploadTableBtn_clicked()
     QString fileName = QFileDialog::getOpenFileName(this, "Select a file", QDir::homePath(),filter);
     ui->pathLbl->setText(fileName);
     loadTableContents(ui->bookTable, ui->typeOfShelve, fileName);
-//    QString shelveName = ui->shelveNameLineEdit->text();
-//    if(ui->typeOfShelve->findText(shelveName) == -1){   //not found in comboBox
-//        ui->typeOfShelve->addItem(shelveName);
-//    }
 }
 
 void MainWindow::on_setShelveBtn_clicked()
@@ -153,37 +142,47 @@ void MainWindow::on_setShelveBtn_clicked()
 
 void MainWindow::on_openBookBtn_clicked()
 {
-//    QString bookPath;
-//    QString bookName = ui->bookNameLineEdit->text();
-//    int rowIndex = 0, flag = 0;
+    QString bookPath;
+    QString bookName = ui->bookNameLineEdit->text();
+    int rowIndex = 0, flag = 0;
 
-//    for (int i = 0; i < ui->bookTable->rowCount(); i++) {
-//        if (ui->bookTable->item(i, 0)->text() == bookName) {
-//               flag = 1;
-//               rowIndex = i;
-//               break;
-//        }
-//    }
-//    if(flag == 1){
-//        bookPath =  ui->bookTable->item(rowIndex, 2)->text();
-//    }else{
-//        QMessageBox::warning(this,"Book in the table", "Book does not exist. Try again.");
-//    }
-//    bool endsWith = false;
-//    endsWith = bookPath.endsWith("pdf",Qt::CaseInsensitive);
-//    if(endsWith == true){
-//        bool endsWith = false;
-//        pdfViewer pdfWindow;
-//        pdfWindow.setModal(true);
-//        pdfWindow.exec();
-//    }
-//    endsWith = bookPath.endsWith("epub",Qt::CaseInsensitive);
-//    if(endsWith == true){
-//        bool endsWith = false;
-//        epubViewer epubWindow;
-//        epubWindow.setModal(true);
-//        epubWindow.exec();
-//    }
+    for (int i = 0; i < ui->bookTable->rowCount(); i++) {
+        if (ui->bookTable->item(i, 0)->text() == bookName) {
+               flag = 1;
+               rowIndex = i;
+               break;
+        }
+    }
+    if(flag == 1){
+        bookPath =  ui->bookTable->item(rowIndex, 2)->text();
+    }else{
+        QMessageBox::warning(this,"Book in the table", "Book does not exist. Try again.");
+    }
+    bool endsWith = false;
+    endsWith = bookPath.endsWith("pdf",Qt::CaseInsensitive);
+    if(endsWith == true){
+        bool endsWith = false;
+        QMessageBox::warning(this,"Book in the table", "pdf");
+
+        // pdfViewer pdfWindow;
+        // pdfWindow.setModal(true);
+        // pdfWindow.exec();
+    }
+    endsWith = bookPath.endsWith("epub",Qt::CaseInsensitive);
+   if(endsWith == true){
+       bool endsWith = false;
+       QMessageBox::warning(this,"Book in the table", "epub");
+
+       // EpubParser epubParser(bookPath);
+       // EpubReaderDialog epubReaderDialog(epubParser.getContentHandlers());
+       // epubReaderDialog.setModal(true);
+       // epubReaderDialog.exec();
+
+       // epubViewer epubWindow;
+       // epubWindow.setModal(true);
+       // epubWindow.exec();
+   }
 
 }
+
 
