@@ -6,8 +6,7 @@
 #include <QDir>
 #include <QMessageBox>
 #include <QTableWidgetItem>
-//#include <QtPdf>
-//#include <QtPdf/QPdfPageNavigator>
+//#include "book.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -18,8 +17,11 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    Ui::MainWindow *ui;
     MainWindow(QWidget *parent = nullptr);
+    QTableWidget* getTableWidget();
     ~MainWindow();
+    //QList<Book> books;
 
 private slots:
     void on_createShelveBtn_clicked();
@@ -40,7 +42,9 @@ private slots:
 
     void on_openBookBtn_clicked();
 
+   // QList<Book> on_debug_clicked(QTableWidget* table, QList<Book>& books);
+
 private:
-    Ui::MainWindow *ui;
+
 };
 #endif // MAINWINDOW_H
