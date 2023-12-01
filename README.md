@@ -1,1 +1,1 @@
-# courseWord3rdSemestr
+# courseWorK3rdSemestr
