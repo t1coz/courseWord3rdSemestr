@@ -42,8 +42,6 @@ private slots:
 
     void on_openBookBtn_clicked();
 
-   // QList<Book> on_debug_clicked(QTableWidget* table, QList<Book>& books);
-
 private:
 
 };
