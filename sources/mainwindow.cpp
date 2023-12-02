@@ -161,26 +161,17 @@ void MainWindow::on_openBookBtn_clicked()
     bool endsWith = false;
     endsWith = bookPath.endsWith("pdf",Qt::CaseInsensitive);
     if(endsWith == true){
-        bool endsWith = false;
         QMessageBox::warning(this,"Book in the table", "pdf");
 
-        // pdfViewer pdfWindow;
-        // pdfWindow.setModal(true);
-        // pdfWindow.exec();
+
     }
     endsWith = bookPath.endsWith("epub",Qt::CaseInsensitive);
    if(endsWith == true){
-       bool endsWith = false;
-       QMessageBox::warning(this,"Book in the table", "epub");
 
-       // EpubParser epubParser(bookPath);
-       // EpubReaderDialog epubReaderDialog(epubParser.getContentHandlers());
-       // epubReaderDialog.setModal(true);
-       // epubReaderDialog.exec();
-
-       // epubViewer epubWindow;
-       // epubWindow.setModal(true);
-       // epubWindow.exec();
+       EpubParser epubParser(bookPath);
+       EpubReaderDialog epubReaderDialog(&epubParser);
+       epubReaderDialog.setModal(true);
+       epubReaderDialog.exec();
    }
 
 }
