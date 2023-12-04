@@ -13,6 +13,7 @@
 #include <QTextEdit>
 #include <QTabWidget>
 #include <QScrollArea>
+#include<QMessageBox>
 namespace Ui {
 class EpubReaderDialog;
 }
@@ -29,9 +30,7 @@ private:
     Ui::EpubReaderDialog *ui;
 
     QVBoxLayout* mainLayout;
-    QScrollArea* contentScrollArea;
-    QWidget* contentWidget;
-    QVBoxLayout* contentLayout;
+    QLabel* titleLabel;
     QTextEdit* textEdit;
     QLabel* imageLabel;
 

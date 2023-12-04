@@ -4,8 +4,7 @@
 #include <iostream>
 #include <QString>
 #include <QTableWidget>
-#include "ui_mainwindow.h"
-#include <curses.h>
+//#include <curses.h>
 using namespace std;
 class Book: public MainWindow{
     QString name;
@@ -20,9 +19,9 @@ public:
     QString getShelveAtIndex(int rowIndex);
     QString getPath();
     QString getPathAtIndex(int rowIndex);
-//    void setName(QString userName, int rowIndex);
-//    void setShelve(QString userShelve, int rowIndex);
-//    void setPath(QString userPath, int rowIndex);
+    //    void setName(QString userName, int rowIndex);
+    //    void setShelve(QString userShelve, int rowIndex);
+    //    void setPath(QString userPath, int rowIndex);
 
 };
 void getStr(char **string);

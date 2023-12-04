@@ -8,15 +8,18 @@ public:
     ~EpubParser();
 
     void parse();
+
     QString getParsedText() const;
     QString getImagePaths() const;
     QString getMetadata() const;
-    QString getTableOfContents() const;
     QString getCoverImagePath() const;
+    QString getTableOfContents() const;
+    QString getStylesheets() const;
     QString getSpineItems() const;
     QString getError() const;
 
     void addContentHandler(ContentHandler* handler);
+
 private:
     QList<ContentHandler*> contentHandlers;
     QString error;

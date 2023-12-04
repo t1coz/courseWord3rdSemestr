@@ -52,19 +52,29 @@ private:
     QString metadata;
 };
 
+
 // Table of Contents handler
 class TableOfContentsHandler : public ContentHandler {
 public:
-    void handleContent(const QString& content, const QString& baseUrl) override;
-    QString getResult() const override {return tocContent;}
+    void handleContent(const QString& content, const QString& baseUrl) override {
+        // Process table of contents content
+        toc += content;
+    }
+
+    QString getResult() const override {
+        return toc;
+    }
 
 private:
-    QString tocContent;
+    QString toc;
 };
 
 class CoverImageHandler : public ContentHandler {
 public:
-    void handleContent(const QString& content, const QString& baseUrl) override;
+    void handleContent(const QString& content, const QString& baseUrl) override {
+        // Process cover image content
+        coverImagePath = baseUrl + content;
+    }
 
     QString getResult() const override {
         return coverImagePath;
@@ -72,17 +82,35 @@ public:
 
 private:
     QString coverImagePath;
-    QString convertToAbsoluteUrl(const QString& url, const QString& baseUrl) const ;
 };
 
 // Spine item handler
 class SpineItemHandler : public ContentHandler {
 public:
-    void handleContent(const QString& content, const QString& baseUrl) override;
+    void handleContent(const QString& content, const QString& baseUrl) override {
+        // Process spine item content
+        spineItems.append(baseUrl + content);
+    }
 
-    QString getResult() const override {return spineItems.join("\n");}
+    QString getResult() const override {
+        return spineItems.join("\n");
+    }
 
 private:
     QStringList spineItems;
+};
+class StylesheetHandler : public ContentHandler {
+public:
+    void handleContent(const QString& content, const QString& baseUrl) override {
+        // Process stylesheet content
+        stylesheets.append(baseUrl + content);
+    }
+
+    QString getResult() const override {
+        return stylesheets.join("\n");
+    }
+
+private:
+    QStringList stylesheets;
 };
 #endif // HANDLERS_H
