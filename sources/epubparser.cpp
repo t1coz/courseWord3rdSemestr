@@ -9,8 +9,8 @@ EpubParser::EpubParser(const QString& filePath) {
     contentHandlers.append(new TableOfContentsHandler());
     contentHandlers.append(new CoverImageHandler());
     contentHandlers.append(new SpineItemHandler());
+    contentHandlers.append(new StylesheetHandler());
 
-    // Open the EPUB file as a QFile
     QFile epubFile(filePath);
 
     if (!epubFile.open(QIODevice::ReadOnly)) {
@@ -22,7 +22,7 @@ EpubParser::EpubParser(const QString& filePath) {
     QXmlStreamReader xmlReader(&epubFile);
 
     QString baseUrl = QFileInfo(filePath).dir().path() + "/";
-    QString item  = "item";
+    QString item = "item";
     while (!xmlReader.atEnd() && !xmlReader.hasError()) {
         QXmlStreamReader::TokenType token = xmlReader.readNext();
 
@@ -45,7 +45,6 @@ EpubParser::~EpubParser() {
 }
 
 void EpubParser::parseContentFile(const QString& contentFilePath, const QString& baseUrl) {
-    // Open the content file as a QFile
     QFile contentFile(baseUrl + contentFilePath);
 
     if (!contentFile.open(QIODevice::ReadOnly)) {
@@ -86,12 +85,16 @@ QString EpubParser::getMetadata() const {
     return dynamic_cast<MetadataHandler*>(contentHandlers[2])->getResult();
 }
 
+QString EpubParser::getCoverImagePath() const {
+    return dynamic_cast<CoverImageHandler*>(contentHandlers[4])->getResult();
+}
+
 QString EpubParser::getTableOfContents() const {
     return dynamic_cast<TableOfContentsHandler*>(contentHandlers[3])->getResult();
 }
 
-QString EpubParser::getCoverImagePath() const {
-    return dynamic_cast<CoverImageHandler*>(contentHandlers[4])->getResult();
+QString EpubParser::getStylesheets() const {
+    return dynamic_cast<StylesheetHandler*>(contentHandlers[6])->getResult();
 }
 
 QString EpubParser::getSpineItems() const {

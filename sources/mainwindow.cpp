@@ -3,6 +3,7 @@
 #include "epubreaderdialog.h"
 #include "ui_mainwindow.h"
 #include "data.h"
+#include "mobidialog.h"
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -76,11 +77,8 @@ void MainWindow::on_addBookBtn_clicked()
         }
     }
 }
-
-
 void MainWindow::on_deleteBookBtn_clicked(){
     QString bookName = ui->bookNameLineEdit->text();
-    //QList<QTableWidgetItem *> NameList = ui->bookTable->findItems(bookName, Qt::MatchExactly);
     int rowIndex = 0, flag = 0;
     for (int i = 0; i < ui->bookTable->rowCount(); i++) {
         if (ui->bookTable->item(i, 0)->text() == bookName) {
@@ -90,7 +88,10 @@ void MainWindow::on_deleteBookBtn_clicked(){
         }
     }
     if(flag == 1){
-            ui->bookTable->removeRow(rowIndex);
+        QString shelveName = ui->bookTable->item(rowIndex, 1)->text();
+        ui->typeOfShelve->removeItem(ui->typeOfShelve->findText(shelveName,Qt::MatchContains));
+        ui->bookTable->removeRow(rowIndex);
+
     }else{
         QMessageBox::warning(this,"Book in the table", "Book does not exist. Try again.");
     }
@@ -98,8 +99,13 @@ void MainWindow::on_deleteBookBtn_clicked(){
 
 void MainWindow::on_saveTableBtn_clicked()
 {
-    QString saveName = "/Users/hanna/Documents/qt/notCmakeKursach/kursachFCK/temp.txt";
-    saveTableContents(ui->bookTable, saveName);
+    QDateTime date = QDateTime::currentDateTime();
+    QString formattedDate = date.toString("dd.MM.yyyy@hh:mm:ss");
+    QByteArray formattedTimeMsg = formattedDate.toLocal8Bit();
+    //QString saveName = formattedTimeMsg;
+    saveTableContents(ui->bookTable, formattedTimeMsg);
+    QMessageBox::warning(this,"Book in the table", formattedTimeMsg);
+
 }
 
 void MainWindow::on_uploadTableBtn_clicked()
@@ -130,9 +136,9 @@ void MainWindow::on_setShelveBtn_clicked()
             }
         }
         if(flagTable == 1){
-               ui->bookTable->setItem(rowIndex, 1, new QTableWidgetItem(shelveName));
+            ui->bookTable->setItem(rowIndex, 1, new QTableWidgetItem(shelveName));
         }else{
-               QMessageBox::warning(this,"Book in the table", "Book does not exist. Try again.");
+            QMessageBox::warning(this,"Book in the table", "Book does not exist. Try again.");
         }
     }else{
         QMessageBox::warning(this,"Shelve error", "Given shelve does not exist. You should add it separatly and try again..");
@@ -148,9 +154,9 @@ void MainWindow::on_openBookBtn_clicked()
 
     for (int i = 0; i < ui->bookTable->rowCount(); i++) {
         if (ui->bookTable->item(i, 0)->text() == bookName) {
-               flag = 1;
-               rowIndex = i;
-               break;
+            flag = 1;
+            rowIndex = i;
+            break;
         }
     }
     if(flag == 1){
@@ -159,20 +165,21 @@ void MainWindow::on_openBookBtn_clicked()
         QMessageBox::warning(this,"Book in the table", "Book does not exist. Try again.");
     }
     bool endsWith = false;
-    endsWith = bookPath.endsWith("pdf",Qt::CaseInsensitive);
+    endsWith = bookPath.endsWith("mobi",Qt::CaseInsensitive);
     if(endsWith == true){
-        QMessageBox::warning(this,"Book in the table", "pdf");
-
+        QMessageBox::warning(this,"Book in the table", "mobi");
+        MobiDialog mobiDialog;
+        mobiDialog.show();
 
     }
     endsWith = bookPath.endsWith("epub",Qt::CaseInsensitive);
-   if(endsWith == true){
+    if(endsWith == true){
 
-       EpubParser epubParser(bookPath);
-       EpubReaderDialog epubReaderDialog(&epubParser);
-       epubReaderDialog.setModal(true);
-       epubReaderDialog.exec();
-   }
+        EpubParser epubParser(bookPath);
+        EpubReaderDialog epubReaderDialog(&epubParser);
+        //epubReaderDialog.setModal(true);
+        epubReaderDialog.exec();
+    }
 
 }
 

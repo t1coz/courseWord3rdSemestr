@@ -1,4 +1,5 @@
 #include "book.h"
+#include "ui_mainwindow.h"
 
 QString Book::getName(){
     return name;

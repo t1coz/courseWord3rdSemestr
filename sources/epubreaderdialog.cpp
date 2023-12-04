@@ -1,31 +1,23 @@
 #include "epubreaderdialog.h"
 #include "ui_epubreaderdialog.h"
-
+#include "epubparser.h"
 EpubReaderDialog::EpubReaderDialog(EpubParser* epubParser, QWidget* parent)
     : QDialog(parent),
-    ui(new Ui::EpubReaderDialog)
+     ui(new Ui::EpubReaderDialog)
 {
-    ui->setupUi(this);
     mainLayout = new QVBoxLayout(this);
-    contentScrollArea = new QScrollArea(this);
-    contentWidget = new QWidget(this);
-    contentLayout = new QVBoxLayout(contentWidget);
-    textEdit = new QTextEdit(contentWidget);
-    imageLabel = new QLabel(contentWidget);
+    titleLabel = new QLabel("EPUB Reader", this);
+    textEdit = new QTextEdit(this);
+    imageLabel = new QLabel(this);
 
     setupUI(epubParser);
     displayContent(epubParser);
 }
 
 void EpubReaderDialog::setupUI(EpubParser* epubParser) {
-    // Set up the content scroll area
-    contentScrollArea->setWidgetResizable(true);
-    contentScrollArea->setWidget(contentWidget);
-    mainLayout->addWidget(contentScrollArea);
-
-    // Set up the content layout
-    contentLayout->addWidget(textEdit);
-    contentLayout->addWidget(imageLabel);
+    mainLayout->addWidget(titleLabel);
+    mainLayout->addWidget(textEdit);
+    mainLayout->addWidget(imageLabel);
 
     setWindowTitle("EPUB Reader");
     setFixedSize(800, 600);
@@ -33,11 +25,11 @@ void EpubReaderDialog::setupUI(EpubParser* epubParser) {
 
 void EpubReaderDialog::displayContent(EpubParser* epubParser) {
     if (!epubParser->getError().isEmpty()) {
-        textEdit->setPlainText(epubParser->getError());
+        QMessageBox::critical(this, "Error", epubParser->getError());
         return;
     }
 
-    // Display parsed content in the text edit
+    // Display parsed text content in the text edit
     textEdit->setPlainText(epubParser->getParsedText());
 
     // Display cover image
@@ -49,7 +41,6 @@ void EpubReaderDialog::displayContent(EpubParser* epubParser) {
         imageLabel->setFixedSize(imageSize);
     }
 }
-
 EpubReaderDialog::~EpubReaderDialog()
 {
     delete ui;
