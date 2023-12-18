@@ -1,9 +1,12 @@
-#include "mainwindow.h"
-#include "epubparser.h"
-#include "epubreaderdialog.h"
 #include "ui_mainwindow.h"
+#include "widget.h"
+#include "mainwindow.h"
+//#include "epubparser.h"
+//#include "epubreaderdialog.h"
 #include "data.h"
-#include "mobidialog.h"
+
+#include <QSettings>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -51,7 +54,7 @@ void MainWindow::on_deleteShelveBtn_clicked()
 
 void MainWindow::on_uploadFileBtn_clicked()
 {
-    QString filter = "PDF (*.pdf) ;;  EPUB (*.epub) ;; Mobi (*.mobi)";
+    QString filter = "EPUB (*.epub)";
     QString fileName = QFileDialog::getOpenFileName(this, "Select a file", QDir::homePath(),filter);
     ui->pathLbl->setText(fileName);
 }
@@ -152,6 +155,7 @@ void MainWindow::on_openBookBtn_clicked()
     QString bookName = ui->bookNameLineEdit->text();
     int rowIndex = 0, flag = 0;
 
+    //searching for the book in the table
     for (int i = 0; i < ui->bookTable->rowCount(); i++) {
         if (ui->bookTable->item(i, 0)->text() == bookName) {
             flag = 1;
@@ -159,28 +163,48 @@ void MainWindow::on_openBookBtn_clicked()
             break;
         }
     }
+
+    //if book is found
     if(flag == 1){
         bookPath =  ui->bookTable->item(rowIndex, 2)->text();
     }else{
         QMessageBox::warning(this,"Book in the table", "Book does not exist. Try again.");
     }
     bool endsWith = false;
-    endsWith = bookPath.endsWith("mobi",Qt::CaseInsensitive);
-    if(endsWith == true){
-        QMessageBox::warning(this,"Book in the table", "mobi");
-        MobiDialog mobiDialog;
-        mobiDialog.show();
 
-    }
     endsWith = bookPath.endsWith("epub",Qt::CaseInsensitive);
     if(endsWith == true){
 
-        EpubParser epubParser(bookPath);
-        EpubReaderDialog epubReaderDialog(&epubParser);
-        //epubReaderDialog.setModal(true);
-        epubReaderDialog.exec();
+
+        Widget *w = new Widget;
+        w->setAttribute(Qt::WA_DeleteOnClose);
+
+        QSettings settings;
+        // QString fileName = QFileDialog::getOpenFileName(this, tr("Open epub"), settings.value("lastFile").toString(), tr("EPUB files (*.epub)"));
+        // if (fileName.isEmpty()) {
+        //     return;
+        // }
+
+        settings.setValue("lastFile", bookPath);
+
+        //w->loadFile(bookPath);
+        //w->loadFile("bookPath");
+        if (!w->loadFile(bookPath)) {
+            qWarning() << "Failed to load" << bookPath;
+            return;
+        }
+
+
+        QMessageBox::warning(this,"Book in the table", bookPath);
+
+        w->show();
     }
 
+    endsWith = bookPath.endsWith("mobi",Qt::CaseInsensitive);
+    if(endsWith == true){
+        QMessageBox::warning(this,"Book in the table", "mobi");
+        // MobiDialog mobiDialog;
+        // mobiDialog.setModal(true);
+        // mobiDialog.exec();
+    }
 }
-
-
