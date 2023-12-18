@@ -6,10 +6,11 @@
 #include <QDir>
 #include <QMessageBox>
 #include <QTableWidgetItem>
-//#include "book.h"
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
+namespace Ui {
+class MainWindow;
+}
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -41,8 +42,6 @@ private slots:
     void on_setShelveBtn_clicked();
 
     void on_openBookBtn_clicked();
-
-    // QList<Book> on_debug_clicked(QTableWidget* table, QList<Book>& books);
 
 private:
 
