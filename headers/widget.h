@@ -16,8 +16,7 @@ public:
 
     void scroll(int amount);
     void scrollPage(int amount);
-    bool loadFile(const QString &path);
-    bool loadFile();
+    bool loadFile(const QString &path, const QString bookName);
 
 protected:
     void paintEvent(QPaintEvent *event) override;

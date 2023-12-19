@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QTableWidgetItem>
 #include <QComboBox>
+#include <QTextStream>
 using namespace std ;
 
 void saveTableContents(QTableWidget* tableWidget, const QString& fileName);
