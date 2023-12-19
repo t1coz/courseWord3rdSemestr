@@ -27,20 +27,8 @@ Widget::~Widget()
 {
 
 }
-bool Widget::loadFile()
-{
-    QSettings settings;
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open epub"), settings.value("lastFile").toString(), tr("EPUB files (*.epub)"));
-    if (fileName.isEmpty()) {
-        return false;
-    }
 
-    settings.setValue("lastFile", fileName);
-
-    return loadFile(fileName);
-}
-
-bool Widget::loadFile(const QString &path)
+bool Widget::loadFile(const QString &path, const QString bookName)
 {
     if (path.isEmpty()) {
         return false;
@@ -50,8 +38,9 @@ bool Widget::loadFile(const QString &path)
         qWarning() << path << "doesn't exist";
         return false;
     }
-
+    this->setWindowTitle(bookName);
     m_document->setPageSize(size());
+
     m_document->openDocument(path);
 
     return true;
@@ -108,12 +97,12 @@ void Widget::paintEvent(QPaintEvent*)
 void Widget::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Up) {
-        scroll(-20);
+        scroll(-50);
     } else if (event->key() == Qt::Key_Down) {
-        scroll(20);
-    } else if (event->key() == Qt::Key_PageUp) {
+        scroll(50);
+    } else if (event->key() == Qt::Key_Left) {
         scrollPage(-1);
-    } else if (event->key() == Qt::Key_PageDown) {
+    } else if (event->key() == Qt::Key_Right) {
         scrollPage(1);
     } else if (event->key() == Qt::Key_End) {
         m_yOffset = m_document->size().height() - m_document->pageSize().height();

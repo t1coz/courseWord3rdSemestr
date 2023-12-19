@@ -6,6 +6,12 @@
 #include "data.h"
 
 #include <QSettings>
+#include <QDateTime>
+#include <QDebug>
+//#include <QWarning>
+
+#define SAVES_PATH "/Users/hanna/Documents/qt/idgfa/idkwati/saves/"
+#define PROJECT_PATH "/Users/hanna/Documents/qt/idgfa/idkwati/"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -36,7 +42,7 @@ void MainWindow::on_createShelveBtn_clicked()
 void MainWindow::on_deleteShelveBtn_clicked()
 {
     QString shelveName = ui->shelveNameLineEdit->text();
-    if(shelveName == "" || shelveName == "all" ||shelveName == "undecided" ){
+    if(shelveName == ""||shelveName == "undecided" ){
         QMessageBox::warning(this,"Shelve error", "You should enter a valid name. Try again.");
     }else{
         if(ui->typeOfShelve->findText(shelveName) != -1 ){   //found in comboBox
@@ -54,8 +60,9 @@ void MainWindow::on_deleteShelveBtn_clicked()
 
 void MainWindow::on_uploadFileBtn_clicked()
 {
+    QString defaultPath ="/Users/hanna/Desktop/books/";
     QString filter = "EPUB (*.epub)";
-    QString fileName = QFileDialog::getOpenFileName(this, "Select a file", QDir::homePath(),filter);
+    QString fileName = QFileDialog::getOpenFileName(this, "Select a file", defaultPath, filter);
     ui->pathLbl->setText(fileName);
 }
 
@@ -102,19 +109,21 @@ void MainWindow::on_deleteBookBtn_clicked(){
 
 void MainWindow::on_saveTableBtn_clicked()
 {
+
     QDateTime date = QDateTime::currentDateTime();
-    QString formattedDate = date.toString("dd.MM.yyyy@hh:mm:ss");
-    QByteArray formattedTimeMsg = formattedDate.toLocal8Bit();
-    //QString saveName = formattedTimeMsg;
-    saveTableContents(ui->bookTable, formattedTimeMsg);
-    QMessageBox::warning(this,"Book in the table", formattedTimeMsg);
+    QString formattedTime = date.toString("dd-MM-yyyy_hh:mm:ss");
+    QByteArray formattedTimeMsg = formattedTime.toLocal8Bit();
+
+    QString saveName = SAVES_PATH + formattedTimeMsg + ".txt";
+    saveTableContents(ui->bookTable, saveName);
+    QMessageBox::warning(this,"Book in the table", "The book list has been saved succesfully in \"idkwati/saves\" folder!");
 
 }
 
 void MainWindow::on_uploadTableBtn_clicked()
 {
     QString filter = "TXT (*.txt)";
-    QString fileName = QFileDialog::getOpenFileName(this, "Select a file", QDir::homePath(),filter);
+    QString fileName = QFileDialog::getOpenFileName(this, "Select a file", PROJECT_PATH, filter);
     ui->pathLbl->setText(fileName);
     loadTableContents(ui->bookTable, ui->typeOfShelve, fileName);
 }
@@ -125,7 +134,7 @@ void MainWindow::on_setShelveBtn_clicked()
     QString bookName = ui->bookNameLineEdit->text();
     QString shelveName = ui->shelveNameLineEdit->text();
 
-    if(bookName == ""||shelveName == "" ||shelveName=="all"){
+    if(bookName == ""||shelveName == ""){
         QMessageBox::warning(this,"Name", "You should enter the name of the book and the shelve. Try again.");
         return;
     }
@@ -155,7 +164,7 @@ void MainWindow::on_openBookBtn_clicked()
     QString bookName = ui->bookNameLineEdit->text();
     int rowIndex = 0, flag = 0;
 
-    //searching for the book in the table
+
     for (int i = 0; i < ui->bookTable->rowCount(); i++) {
         if (ui->bookTable->item(i, 0)->text() == bookName) {
             flag = 1;
@@ -163,8 +172,6 @@ void MainWindow::on_openBookBtn_clicked()
             break;
         }
     }
-
-    //if book is found
     if(flag == 1){
         bookPath =  ui->bookTable->item(rowIndex, 2)->text();
     }else{
@@ -180,31 +187,15 @@ void MainWindow::on_openBookBtn_clicked()
         w->setAttribute(Qt::WA_DeleteOnClose);
 
         QSettings settings;
-        // QString fileName = QFileDialog::getOpenFileName(this, tr("Open epub"), settings.value("lastFile").toString(), tr("EPUB files (*.epub)"));
-        // if (fileName.isEmpty()) {
-        //     return;
-        // }
 
         settings.setValue("lastFile", bookPath);
-
-        //w->loadFile(bookPath);
-        //w->loadFile("bookPath");
-        if (!w->loadFile(bookPath)) {
+        if (!w->loadFile(bookPath, bookName)) {
             qWarning() << "Failed to load" << bookPath;
             return;
         }
-
-
-        QMessageBox::warning(this,"Book in the table", bookPath);
-
         w->show();
-    }
+    }else{
+        QMessageBox::warning(this,"Format error", "Unsupported book format.");
 
-    endsWith = bookPath.endsWith("mobi",Qt::CaseInsensitive);
-    if(endsWith == true){
-        QMessageBox::warning(this,"Book in the table", "mobi");
-        // MobiDialog mobiDialog;
-        // mobiDialog.setModal(true);
-        // mobiDialog.exec();
     }
 }
