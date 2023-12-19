@@ -110,11 +110,6 @@
          </property>
          <item>
           <property name="text">
-           <string>all</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
            <string>undecided</string>
           </property>
          </item>
